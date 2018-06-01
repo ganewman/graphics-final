@@ -348,6 +348,35 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
   return points;
 }
 
+/*====== void add_cylinder ==========
+struct matrix * points
+double cx
+double cy
+double cz
+double r
+double h
+int step
+ 
+adds all the points for a cylinder with radius r, height h, and its bottom face centered at (cx, cy, cz)
+
+should call generate_cylinder to create the necessary points
+============== */
+void add_cylinder(struct matrix * edges, double cx, double cy, double cz, double r, double h, int step){
+  struct matrix * points = generate_cylinder(cx, cy, cz, r, h, step);
+  int i;
+  double x, y, z;
+  for (i = 0; i < step * step; i++){
+    x = points-> m[0][i];
+    y = points-> m[1][i];
+    z = points-> m[2][i];
+    add_edge(edges, x, y, z, x + 1, y, z); 
+  }
+  free_matrix(points);
+  return;
+
+}
+
+
 /*====== struct matrix * generate_cylinder() ========
   Inputs:
   double x
@@ -361,30 +390,18 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
 
 struct matrix * generate_cylinder(double cx, double cy, double cz, double r, double h, int step){
   struct matrix * points = new_matrix(4, step * step);
-  int circle, translation, trans_start, trans_stop, circ_start, circ_stop;
-  double x, y, z, trans, circ;
 
-  x = cx;
-  y = cy;
-  z= cz;
-  circ_start = 0;
-  circ_stop = step;
-
-  for ( = trans_start; translation < trans_stop; translation++) {
-    trans = (double)translation / step;
-
-    for(circle = circ_start; circle <= circ_stop; circle++){
-      circ = (double)circle / step;
-
-      x = r * cos(M_PI * circ) + x;
-      y = r * sin(M_PI * circ) *
-        cos(2*M_PI * rot) + y;
-      z = r * sin(M_PI * circ) *
-        sin(2*M_PI * rot) + z;
-
-      /* printf("rotation: %d\tcircle: %d\n", rotation, circle); */
-      /* printf("rot: %lf\tcirc: %lf\n", rot, circ); */
-      /* printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z); */
+  double x, y, z, theta, translation;
+  int circle_step;
+  int cylinder_step;
+  for(cylinder_step = 1; cylinder_step <= step; cylinder_step++){
+    translation = ((double) cylinder_step / step) * h;
+    for( circle_step = 1; circle_step <= step; circle_step++){
+      theta = (double) circle_step / step;
+      x = r * cos(M_PI * theta) + cx;
+      y = r * sin(M_PI * theta) + cy + translation;
+      z = r * sin(M_PI * theta) + cz;
+      
       add_point(points, x, y, z);
     }
   }
