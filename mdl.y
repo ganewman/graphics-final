@@ -29,7 +29,7 @@
 %token <val> DOUBLE
 %token <string> LIGHT AMBIENT
 %token <string> CONSTANTS SAVE_COORDS CAMERA
-%token <string> SPHERE TORUS BOX LINE CS MESH TEXTURE
+%token <string> SPHERE TORUS BOX CYLINDER LINE CS MESH TEXTURE
 %token <string> STRING
 %token <string> SET MOVE SCALE ROTATE BASENAME SAVE_KNOBS TWEEN FRAMES VARY
 %token <string> PUSH POP SAVE GENERATE_RAYFILES
@@ -237,6 +237,14 @@ BOX STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   m = (struct matrix *)new_matrix(4,4);
   op[lastop].op.box.cs = add_symbol($9,SYM_MATRIX,m);
 
+  lastop++;
+}|
+
+CYLINDER DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE
+{
+  lineno++;
+  op[lastop].opcode = CYLINDER;
+  op[lastop].op.
   lastop++;
 }|
 
