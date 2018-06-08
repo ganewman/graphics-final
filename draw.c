@@ -364,12 +364,28 @@ should call generate_cylinder to create the necessary points
 void add_cylinder(struct matrix * edges, double cx, double cy, double cz, double r, double h, int step){
   struct matrix * points = generate_cylinder(cx, cy, cz, r, h, step);
   int i;
-  double x, y, z;
-  for (i = 0; i < step * step; i++){
-    x = points-> m[0][i];
-    y = points-> m[1][i];
-    z = points-> m[2][i];
-    add_edge(edges, x, y, z, x + 1, y, z); 
+  for (i = 0; i < (step * step) - step; i++){
+    add_polygon(edges, points-> m[0][i],
+		points-> m[1][i],
+		points-> m[2][i],
+		points-> m[0][i + step],
+		points-> m[1][i + step],
+		points-> m[2][i + step],
+		points-> m[0][i + 1],
+		points-> m[1][i + 1],
+		points-> m[2][i + 1]
+		);
+    add_polygon(edges, points-> m[0][i + step],
+		points-> m[1][i + step],
+		points-> m[2][i + step],
+		points-> m[0][i + step + 1],
+		points-> m[1][i + step + 1],
+		points-> m[2][i + step + 1],
+		points-> m[0][i + 1],
+		points-> m[1][i + 1],
+		points-> m[2][i + 1]
+		);		
+    
   }
   free_matrix(points);
   return;
