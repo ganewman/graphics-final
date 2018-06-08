@@ -159,6 +159,13 @@ void my_main() {
       tmp->lastcol = 0;
     }
 
+    else if(op[i].opcode == CYLINDER){
+      add_cylinder(tmp, op[i].op.cylinder.d[0], op[i].op.cylinder.d[1], op[i].op.cylinder.d[2], op[i].op.cylinder.r, op[i].op.cylinder.h, step_3d);
+      matrix_mult(peek(systems), tmp);
+      draw_lines(tmp, t, zb, g);
+      tmp->lastcol = 0;
+    }
+
     else if(op[i].opcode == TORUS){
       add_torus(tmp, op[i].op.torus.d[0], op[i].op.torus.d[1], op[i].op.torus.d[2], op[i].op.torus.r0, op[i].op.torus.r1, step_3d);
       matrix_mult(peek(systems), tmp);

@@ -398,9 +398,9 @@ struct matrix * generate_cylinder(double cx, double cy, double cz, double r, dou
     translation = ((double) cylinder_step / step) * h;
     for( circle_step = 1; circle_step <= step; circle_step++){
       theta = (double) circle_step / step;
-      x = r * cos(M_PI * theta) + cx;
-      y = r * sin(M_PI * theta) + cy + translation;
-      z = r * sin(M_PI * theta) + cz;
+      x = r * cos(2 * M_PI * theta) + cx;
+      y = translation;
+      z = r * sin(2 * M_PI * theta) + cz;
       
       add_point(points, x, y, z);
     }

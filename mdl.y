@@ -244,7 +244,12 @@ CYLINDER DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE
 {
   lineno++;
   op[lastop].opcode = CYLINDER;
-  op[lastop].op.
+  op[lastop].op.cylinder.d[0] = $2;
+  op[lastop].op.cylinder.d[1] = $3;
+  op[lastop].op.cylinder.d[2] = $4;
+  op[lastop].op.cylinder.d[3] = 0;
+  op[lastop].op.cylinder.r = $5;
+  op[lastop].op.cylinder.h = $6;
   lastop++;
 }|
 
