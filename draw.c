@@ -167,7 +167,7 @@ void draw_polygons(struct matrix *polygons, screen s, zbuffer zb,
 
       color c = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect);
 
-      scanline_convert(polygons, point, s, zb, c);
+      //    scanline_convert(polygons, point, s, zb, c);
 
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
@@ -349,43 +349,57 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
 }
 
 /*====== void add_cylinder ==========
-struct matrix * points
-double cx
-double cy
-double cz
-double r
-double h
-int step
+  struct matrix * points
+  double cx
+  double cy
+  double cz
+  double r
+  double h
+  int step
  
-adds all the points for a cylinder with radius r, height h, and its bottom face centered at (cx, cy, cz)
+  adds all the points for a cylinder with radius r, height h, and its bottom face centered at (cx, cy, cz)
 
-should call generate_cylinder to create the necessary points
-============== */
+  should call generate_cylinder to create the necessary points
+  ============== */
 void add_cylinder(struct matrix * edges, double cx, double cy, double cz, double r, double h, int step){
   struct matrix * points = generate_cylinder(cx, cy, cz, r, h, step);
-  int i;
-  for (i = 0; i < (step * step) - step; i++){
-    add_polygon(edges, points-> m[0][i],
-		points-> m[1][i],
-		points-> m[2][i],
-		points-> m[0][i + step],
-		points-> m[1][i + step],
-		points-> m[2][i + step],
-		points-> m[0][i + 1],
-		points-> m[1][i + 1],
-		points-> m[2][i + 1]
+  int i, n;
+  int p0, p1, p2, p3;
+  for (i = 0; i < 2; i++){
+
+    for(n = 0; n < step; n++){
+      p0 = i * step + n;
+      if (n == step - 1){
+	p1 = p0 - step;
+      }
+      else {
+	p1 = p0 + 1;
+      }
+      p2 = (p1 + step) % (step * step);
+      p3 = (p0 + step) % (step * step);
+      
+      add_polygon(edges, points-> m[0][p0],
+		points-> m[1][p0],
+		points-> m[2][p0],
+		points-> m[0][p3],
+		points-> m[1][p3],
+		points-> m[2][p3],
+		points-> m[0][p2],
+		points-> m[1][p2],
+		points-> m[2][p2]
 		);
-    add_polygon(edges, points-> m[0][i + step],
-		points-> m[1][i + step],
-		points-> m[2][i + step],
-		points-> m[0][i + step + 1],
-		points-> m[1][i + step + 1],
-		points-> m[2][i + step + 1],
-		points-> m[0][i + 1],
-		points-> m[1][i + 1],
-		points-> m[2][i + 1]
-		);		
-    
+      /*   add_polygon(edges, points-> m[0][p0],
+		points-> m[1][p0],
+		points-> m[2][p0],
+		points-> m[0][p2],
+		points-> m[1][p2],
+		points-> m[2][p2],
+		points-> m[0][p1],
+		points-> m[1][p1],
+		points-> m[2][p1]
+		); */
+		
+    }
   }
   free_matrix(points);
   return;
@@ -412,10 +426,10 @@ struct matrix * generate_cylinder(double cx, double cy, double cz, double r, dou
   int cylinder_step;
   for(cylinder_step = 1; cylinder_step <= step; cylinder_step++){
     translation = ((double) cylinder_step / step) * h;
-    for( circle_step = 1; circle_step <= step; circle_step++){
+    for( circle_step = 1; circle_step < step; circle_step++){
       theta = (double) circle_step / step;
       x = r * cos(2 * M_PI * theta) + cx;
-      y = translation;
+      y = translation + cy;
       z = r * sin(2 * M_PI * theta) + cz;
       
       add_point(points, x, y, z);
