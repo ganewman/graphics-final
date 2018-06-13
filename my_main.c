@@ -169,7 +169,8 @@ void my_main() {
     else if(op[i].opcode == CONE){
       add_cone(tmp, op[i].op.cone.d[0], op[i].op.cone.d[1], op[i].op.cone.d[2], op[i].op.cone.r, op[i].op.cylinder.h, step_3d);
       matrix_mult(peek(systems), tmp);
-         draw_polygons(tmp, t, zb, view, light, ambient, areflect, dreflect, sreflect);
+      draw_polygons(tmp, t, zb, view, light, ambient, areflect, dreflect, sreflect);
+      // draw_lines(tmp, t, zb, g);
       tmp->lastcol = 0;
     }
 

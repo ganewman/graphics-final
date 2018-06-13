@@ -167,7 +167,7 @@ void draw_polygons(struct matrix *polygons, screen s, zbuffer zb,
 
       color c = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect);
 
-      //    scanline_convert(polygons, point, s, zb, c);
+      //  scanline_convert(polygons, point, s, zb, c);
 
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
@@ -443,11 +443,17 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
   
   struct matrix * points = generate_cone(cx, cy, cz, r, h, step);
   int i;
-  int p0, p1, p2;
+   int p0, p1, p2;
   p1 = 0; // p1 is always the vertex
-  for (i = 0; i < step; i++){
-    p0 = i + 1;
-    p2 = i + 2;
+  for (i = 1; i <= step; i++){
+    if (i == step){
+      p0 = i;
+      p2 = 1;
+    }
+    else {
+      p0 = i;
+      p2 = i + 1;
+    }
       add_polygon(edges, points-> m[0][p0],
 		points-> m[1][p0],
 		points-> m[2][p0],
@@ -458,7 +464,11 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
 		points-> m[1][p2],
 		points-> m[2][p2]
 		);
-    }
+		}
+  
+  /* for (int i = 0; i < points->lastcol; i++){
+    add_edge(edges, points->m[0][i], points->m[1][i], points->m[2][i], points->m[0][i] + 2, points->m[1][i], points->m[2][i]);
+    }*/
   free_matrix(points);
   return;
 
@@ -480,10 +490,7 @@ struct matrix * generate_cone(double cx, double cy, double cz, double r, double 
   struct matrix * points = new_matrix(4, step * step);
 
   // add vertice of cone
-  points->m[0][0] = cx;
-  points->m[1][0] = cy + h;
-  points->m[2][0] = cz;
-  points->m[3][0] = 0;
+  add_point(points, cx, cy + h, cz);
 
   // add points along circle that form base
   double x, y, z, theta;
@@ -496,6 +503,8 @@ struct matrix * generate_cone(double cx, double cy, double cz, double r, double 
       
       add_point(points, x, y, z);
     }
+    
+    printf("%d\n", points->lastcol);
     return points;
 }
 
