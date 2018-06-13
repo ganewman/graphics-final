@@ -167,7 +167,7 @@ void draw_polygons(struct matrix *polygons, screen s, zbuffer zb,
 
       color c = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect);
 
-      //  scanline_convert(polygons, point, s, zb, c);
+      scanline_convert(polygons, point, s, zb, c);
 
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
@@ -379,25 +379,25 @@ void add_cylinder(struct matrix * edges, double cx, double cy, double cz, double
       p3 = (p0 + step) % (step * step);
       
       add_polygon(edges, points-> m[0][p0],
-		points-> m[1][p0],
-		points-> m[2][p0],
-		points-> m[0][p3],
-		points-> m[1][p3],
-		points-> m[2][p3],
-		points-> m[0][p2],
-		points-> m[1][p2],
-		points-> m[2][p2]
-		);
+		  points-> m[1][p0],
+		  points-> m[2][p0],
+		  points-> m[0][p3],
+		  points-> m[1][p3],
+		  points-> m[2][p3],
+		  points-> m[0][p2],
+		  points-> m[1][p2],
+		  points-> m[2][p2]
+		  );
       /*   add_polygon(edges, points-> m[0][p0],
-		points-> m[1][p0],
-		points-> m[2][p0],
-		points-> m[0][p2],
-		points-> m[1][p2],
-		points-> m[2][p2],
-		points-> m[0][p1],
-		points-> m[1][p1],
-		points-> m[2][p1]
-		); */
+	   points-> m[1][p0],
+	   points-> m[2][p0],
+	   points-> m[0][p2],
+	   points-> m[1][p2],
+	   points-> m[2][p2],
+	   points-> m[0][p1],
+	   points-> m[1][p1],
+	   points-> m[2][p1]
+	   ); */
 		
     }
   }
@@ -443,7 +443,7 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
   
   struct matrix * points = generate_cone(cx, cy, cz, r, h, step);
   int i;
-   int p0, p1, p2;
+  int p0, p1, p2;
   p1 = 0; // p1 is always the vertex
   for (i = 1; i <= step; i++){
     if (i == step){
@@ -454,7 +454,8 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
       p0 = i;
       p2 = i + 1;
     }
-      add_polygon(edges, points-> m[0][p0],
+    // draw polygon on outside of cone
+    add_polygon(edges, points-> m[0][p0],
 		points-> m[1][p0],
 		points-> m[2][p0],
 		points-> m[0][p1],
@@ -464,26 +465,49 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
 		points-> m[1][p2],
 		points-> m[2][p2]
 		);
-		}
+  }
+
+  /* for (i = 1; i <= step; i++){
+    if (i == step){
+      p0 = i;
+      p2 = 1;
+    }
+    else {
+      p0 = i;
+      p2 = i + 1;
+    }
+    // draw polygon on face of cone -- connect points on edge to center point instead of to the vertex
+    add_polygon(edges, points-> m[0][p0],
+		points-> m[1][p0],
+		points-> m[2][p0],
+		cx,
+		cy,
+		cz,
+		points-> m[0][p2],
+		points-> m[1][p2],
+		points-> m[2][p2]
+		);
+    
+		} */
   
-  /* for (int i = 0; i < points->lastcol; i++){
-    add_edge(edges, points->m[0][i], points->m[1][i], points->m[2][i], points->m[0][i] + 2, points->m[1][i], points->m[2][i]);
-    }*/
+  /*  for (int i = 0; i < points->lastcol; i++){
+      add_edge(edges, points->m[0][i], points->m[1][i], points->m[2][i], points->m[0][i] + 2, points->m[1][i], points->m[2][i]);
+      } */
   free_matrix(points);
   return;
 
 }
 
 /* =========== struct matrix * generate_cone =========
-  Inputs:
-  double x
-  double y
-  double z
-  double r
-  double h
-  int step
+   Inputs:
+   double x
+   double y
+   double z
+   double r
+   double h
+   int step
 
-generates the points on the surface of a cone with its base centered at (x, y, z), a radius of r and a height of h
+   generates the points on the surface of a cone with its base centered at (x, y, z), a radius of r and a height of h
 */
 
 struct matrix * generate_cone(double cx, double cy, double cz, double r, double h, int step){
@@ -495,17 +519,17 @@ struct matrix * generate_cone(double cx, double cy, double cz, double r, double 
   // add points along circle that form base
   double x, y, z, theta;
   int circle_step;
-    for( circle_step = 1; circle_step < step; circle_step++){
-      theta = (double) circle_step / step;
-      x = r * cos(2 * M_PI * theta) + cx;
-      y = cy;
-      z = r * sin(2 * M_PI * theta) + cz;
+  for( circle_step = 0; circle_step < step; circle_step++){
+    theta = (double) circle_step / step;
+    x = r * cos(2 * M_PI * theta) + cx;
+    y = cy;
+    z = r * sin(2 * M_PI * theta) + cz;
       
-      add_point(points, x, y, z);
-    }
+    add_point(points, x, y, z);
+  }
     
-    printf("%d\n", points->lastcol);
-    return points;
+  printf("%d\n", points->lastcol);
+  return points;
 }
 
 /*======== void add_torus() ==========
