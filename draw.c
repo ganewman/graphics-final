@@ -439,6 +439,65 @@ struct matrix * generate_cylinder(double cx, double cy, double cz, double r, dou
   return points; 
 }
 
+void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, double h, int step){
+  
+  struct matrix * points = generate_cone(cx, cy, cz, r, h, step);
+  int i;
+  int p0, p1, p2;
+  p1 = 0; // p1 is always the vertex
+  for (i = 0; i < step; i++){
+    p0 = i + 1;
+    p2 = i + 2;
+      add_polygon(edges, points-> m[0][p0],
+		points-> m[1][p0],
+		points-> m[2][p0],
+		points-> m[0][p1],
+		points-> m[1][p1],
+		points-> m[2][p1],
+		points-> m[0][p2],
+		points-> m[1][p2],
+		points-> m[2][p2]
+		);
+    }
+  free_matrix(points);
+  return;
+
+}
+
+/* =========== struct matrix * generate_cone =========
+  Inputs:
+  double x
+  double y
+  double z
+  double r
+  double h
+  int step
+
+generates the points on the surface of a cone with its base centered at (x, y, z), a radius of r and a height of h
+*/
+
+struct matrix * generate_cone(double cx, double cy, double cz, double r, double h, int step){
+  struct matrix * points = new_matrix(4, step * step);
+
+  // add vertice of cone
+  points->m[0][0] = cx;
+  points->m[1][0] = cy + h;
+  points->m[2][0] = cz;
+  points->m[3][0] = 0;
+
+  // add points along circle that form base
+  double x, y, z, theta;
+  int circle_step;
+    for( circle_step = 1; circle_step < step; circle_step++){
+      theta = (double) circle_step / step;
+      x = r * cos(2 * M_PI * theta) + cx;
+      y = cy;
+      z = r * sin(2 * M_PI * theta) + cz;
+      
+      add_point(points, x, y, z);
+    }
+    return points;
+}
 
 /*======== void add_torus() ==========
   Inputs:   struct matrix * points

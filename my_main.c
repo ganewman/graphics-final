@@ -166,6 +166,13 @@ void my_main() {
       tmp->lastcol = 0;
     }
 
+    else if(op[i].opcode == CONE){
+      add_cone(tmp, op[i].op.cone.d[0], op[i].op.cone.d[1], op[i].op.cone.d[2], op[i].op.cone.r, op[i].op.cylinder.h, step_3d);
+      matrix_mult(peek(systems), tmp);
+         draw_polygons(tmp, t, zb, view, light, ambient, areflect, dreflect, sreflect);
+      tmp->lastcol = 0;
+    }
+
     else if(op[i].opcode == TORUS){
       add_torus(tmp, op[i].op.torus.d[0], op[i].op.torus.d[1], op[i].op.torus.d[2], op[i].op.torus.r0, op[i].op.torus.r1, step_3d);
       matrix_mult(peek(systems), tmp);
