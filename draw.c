@@ -164,6 +164,7 @@ void draw_polygons(struct matrix *polygons, screen s, zbuffer zb,
     normal = calculate_normal(polygons, point);
 
     if ( dot_product(normal, view) > 0 ) {
+  
 
       color c = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect);
 
@@ -438,7 +439,17 @@ struct matrix * generate_cylinder(double cx, double cy, double cz, double r, dou
 
   return points; 
 }
+/* =========== add_cone ===========
+Inputs:
+struct matrix * edges
+double cx
+double cy
+double cz
+double r
+double h 
+int step
 
+*/
 void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, double h, int step){
   
   struct matrix * points = generate_cone(cx, cy, cz, r, h, step);
@@ -458,16 +469,16 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
     add_polygon(edges, points-> m[0][p0],
 		points-> m[1][p0],
 		points-> m[2][p0],
-		points-> m[0][p1],
-		points-> m[1][p1],
-		points-> m[2][p1],
 		points-> m[0][p2],
 		points-> m[1][p2],
-		points-> m[2][p2]
+		points-> m[2][p2],
+		points-> m[0][p1],
+		points-> m[1][p1],
+		points-> m[2][p1]
 		);
   }
 
-  /* for (i = 1; i <= step; i++){
+  for (i = 1; i <= step; i++){
     if (i == step){
       p0 = i;
       p2 = 1;
@@ -477,18 +488,18 @@ void add_cone(struct matrix * edges, double cx, double cy, double cz, double r, 
       p2 = i + 1;
     }
     // draw polygon on face of cone -- connect points on edge to center point instead of to the vertex
-    add_polygon(edges, points-> m[0][p0],
+    add_polygon(edges, points-> m[0][p2],
+		points-> m[1][p2],
+		points-> m[2][p2],
+		points-> m[0][p0],
 		points-> m[1][p0],
 		points-> m[2][p0],
 		cx,
 		cy,
-		cz,
-		points-> m[0][p2],
-		points-> m[1][p2],
-		points-> m[2][p2]
+		cz
 		);
     
-		} */
+		} 
   
   /*  for (int i = 0; i < points->lastcol; i++){
       add_edge(edges, points->m[0][i], points->m[1][i], points->m[2][i], points->m[0][i] + 2, points->m[1][i], points->m[2][i]);
@@ -528,7 +539,7 @@ struct matrix * generate_cone(double cx, double cy, double cz, double r, double 
     add_point(points, x, y, z);
   }
     
-  printf("%d\n", points->lastcol);
+  //printf("%d\n", points->lastcol);
   return points;
 }
 
