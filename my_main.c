@@ -57,7 +57,7 @@ void my_main() {
   screen t;
   zbuffer zb;
   color g;
-  double step_3d = 4;
+  double step_3d = 100;
   double theta;
 
   //Lighting values here for easy access
